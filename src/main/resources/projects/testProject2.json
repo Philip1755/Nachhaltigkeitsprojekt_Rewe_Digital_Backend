@@ -1,0 +1,12 @@
+{
+  "title": "TestTitle2",
+  "description": "TestDescription2",
+  "owner": "TestOwner2",
+  "tags": [
+    "Tag1", "Tag2", "Tag3"
+  ],
+  "imageSrcs": [
+    "src1", "src2", "src3"
+  ],
+  "url": "TestURL2"
+}
