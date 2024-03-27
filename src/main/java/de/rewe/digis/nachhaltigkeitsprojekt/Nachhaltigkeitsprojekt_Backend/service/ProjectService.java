@@ -2,7 +2,6 @@ package de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.serv
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.model.Project;
-import lombok.Getter;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -14,7 +13,6 @@ import java.util.List;
 @Service
 public class ProjectService {
 
-    @Getter
     private final List<Project> allProjects;
 
     private final ObjectMapper objectMapper;
@@ -25,7 +23,14 @@ public class ProjectService {
         initProjects();
     }
 
-    public void initProjects() {
+    public List<Project> getAllProjects() {
+        if (getJsonFiles().length != allProjects.size())
+            initProjects();
+
+        return allProjects;
+    }
+
+    private void initProjects() {
         allProjects.clear();
         File[] jsonFiles = getJsonFiles();
 
