@@ -2,6 +2,8 @@ package de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.serv
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.model.Project;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -13,6 +15,8 @@ import java.util.List;
 @Service
 public class ProjectService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ProjectService.class);
+
     private final List<Project> allProjects;
 
     private final ObjectMapper objectMapper;
@@ -20,12 +24,15 @@ public class ProjectService {
     public ProjectService() {
         allProjects = new ArrayList<>();
         objectMapper = new ObjectMapper();
+        LOG.info("Initialize Projects for the first time");
         initProjects();
     }
 
     public List<Project> getAllProjects() {
-        if (getJsonFiles().length != allProjects.size())
+        if (getJsonFiles().length != allProjects.size()) {
+            LOG.info("Re-Initialize Projects, due to different size between Json Files and Project List");
             initProjects();
+        }
 
         return allProjects;
     }
@@ -45,6 +52,7 @@ public class ProjectService {
             String Json = Files.readString(file.toPath());
             return objectMapper.readValue(Json, Project.class);
         } catch (IOException e) {
+            LOG.error("Could not read the Json File");
             throw new RuntimeException(e);
         }
     }
