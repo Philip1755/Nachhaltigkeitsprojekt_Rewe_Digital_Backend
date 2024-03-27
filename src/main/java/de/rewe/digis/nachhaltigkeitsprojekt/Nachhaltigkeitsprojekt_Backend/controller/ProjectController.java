@@ -22,6 +22,7 @@ public class ProjectController {
 
     @GetMapping("/all")
     public ResponseEntity<List<Project>> getProjectsByOwner() {
+        projectService.initProjects();
         List<Project> projects = projectService.getAllProjects();
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }

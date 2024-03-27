@@ -25,7 +25,8 @@ public class ProjectService {
         initProjects();
     }
 
-    private void initProjects() {
+    public void initProjects() {
+        allProjects.clear();
         File[] jsonFiles = getJsonFiles();
 
         for (File file : jsonFiles) {
