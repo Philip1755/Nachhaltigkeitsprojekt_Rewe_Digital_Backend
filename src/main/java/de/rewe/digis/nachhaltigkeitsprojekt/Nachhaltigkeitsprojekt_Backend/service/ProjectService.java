@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.model.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@EnableScheduling
 public class ProjectService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProjectService.class);
@@ -37,7 +40,9 @@ public class ProjectService {
         return allProjects;
     }
 
+    @Scheduled(fixedRate = 600000)
     private void initProjects() {
+        LOG.info("Initialize Projects");
         allProjects.clear();
         File[] jsonFiles = getJsonFiles();
 
