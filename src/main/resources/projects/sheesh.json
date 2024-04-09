@@ -1,0 +1,12 @@
+{
+  "title": "sheesh",
+  "description": "D1gis richtig coole Atzen",
+  "owner": "D1gis",
+  "tags": [
+    "Tag1", "Tag2", "Tag3"
+  ],
+  "imageSrcs": [
+    "src1", "src2", "src3"
+  ],
+  "url": "sheeshUrl"
+}
