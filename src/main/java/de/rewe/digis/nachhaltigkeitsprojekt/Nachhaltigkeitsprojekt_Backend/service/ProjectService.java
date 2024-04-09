@@ -2,6 +2,7 @@ package de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.serv
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.model.Project;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -20,6 +21,7 @@ public class ProjectService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProjectService.class);
 
+    @Getter
     private final List<Project> allProjects;
 
     private final ObjectMapper objectMapper;
@@ -27,19 +29,10 @@ public class ProjectService {
     public ProjectService() {
         allProjects = new ArrayList<>();
         objectMapper = new ObjectMapper();
-        LOG.info("Initialize Projects for the first time");
         initProjects();
     }
 
-    public List<Project> getAllProjects() {
-        if (getJsonFiles().length != allProjects.size()) {
-            LOG.info("Re-Initialize Projects, due to different size between Json Files and Project List");
-            initProjects();
-        }
-
-        return allProjects;
-    }
-
+    //call Method every 10 Minutes (600000 Milliseconds)
     @Scheduled(fixedRate = 600000)
     private void initProjects() {
         LOG.info("Initialize Projects");
