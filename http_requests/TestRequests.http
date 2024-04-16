@@ -1,4 +1,16 @@
-GET http://localhost:8080/projects/all
+POST http://localhost:8080/api/projects/add
+Content-Type: application/json
+
+{
+  "title": "TestTitle",
+  "description": "TestDescription",
+  "owner": "TestOwner",
+  "url": "TestURL"
+}
+
+###
+GET http://localhost:8080/api/projects/all
 Accept: application/json
 
 ###
+
