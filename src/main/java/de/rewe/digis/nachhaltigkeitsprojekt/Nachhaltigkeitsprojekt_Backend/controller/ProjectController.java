@@ -1,6 +1,6 @@
 package de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.controller;
 
-import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.model.Project;
+import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.dto.ProjectDto;
 import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,30 +19,30 @@ public class ProjectController {
     private final ProjectService projectService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<Project>> findAllProjects() {
+    public ResponseEntity<List<ProjectDto>> findAllProjects() {
         log.info("GET Request: All Projects");
-        List<Project> projects = projectService.findAllProjects();
+        List<ProjectDto> projects = projectService.getAllProjects();
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 
     @GetMapping("/find/{id}")
-    public ResponseEntity<Project> findProjectById(@PathVariable("id") Long id) {
+    public ResponseEntity<ProjectDto> findProjectById(@PathVariable("id") Long id) {
         log.info("GET Request: Project Width ID: {}", id);
-        Project project = projectService.findProjectById(id);
-        return new ResponseEntity<>(project, HttpStatus.OK);
+        ProjectDto projectDto = projectService.getProjectById(id);
+        return new ResponseEntity<>(projectDto, HttpStatus.OK);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Project> addProject(@RequestBody Project project) {
+    public ResponseEntity<?> addProject(@RequestBody ProjectDto projectDto) {
         log.info("POST Request: add Project");
-        Project p = projectService.addProject(project);
-        return new ResponseEntity<>(p, HttpStatus.CREATED);
+        projectService.addProject(projectDto);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteProjectById(@PathVariable("id") Long id) {
         log.info("DELETE Request: delete Project Width ID: {}", id);
-        projectService.deleteProject(id);
+        projectService.deleteProjectById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
