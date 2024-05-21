@@ -4,7 +4,6 @@ import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.dto.P
 import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,31 +17,28 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
-    @GetMapping("/all")
+    @PostMapping
+    public ResponseEntity<ProjectDto> addProject(@RequestBody ProjectDto projectDto) {
+        log.info("POST Request: add Project");
+        return ResponseEntity.ok(projectService.addProject(projectDto));
+    }
+
+    @GetMapping
     public ResponseEntity<List<ProjectDto>> findAllProjects() {
         log.info("GET Request: All Projects");
-        List<ProjectDto> projects = projectService.getAllProjects();
-        return new ResponseEntity<>(projects, HttpStatus.OK);
+        return ResponseEntity.ok(projectService.getAllProjects());
     }
 
-    @GetMapping("/find/{id}")
-    public ResponseEntity<ProjectDto> findProjectById(@PathVariable("id") Long id) {
-        log.info("GET Request: Project Width ID: {}", id);
-        ProjectDto projectDto = projectService.getProjectById(id);
-        return new ResponseEntity<>(projectDto, HttpStatus.OK);
+    @GetMapping("/{id}")
+    public ResponseEntity<ProjectDto> findProjectById(@PathVariable Long id) {
+        log.info("GET Request: Project With ID: {}", id);
+        return ResponseEntity.ok(projectService.getProjectById(id));
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addProject(@RequestBody ProjectDto projectDto) {
-        log.info("POST Request: add Project");
-        projectService.addProject(projectDto);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteProjectById(@PathVariable("id") Long id) {
-        log.info("DELETE Request: delete Project Width ID: {}", id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProjectById(@PathVariable Long id) {
+        log.info("DELETE Request: delete Project With ID: {}", id);
         projectService.deleteProjectById(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 }

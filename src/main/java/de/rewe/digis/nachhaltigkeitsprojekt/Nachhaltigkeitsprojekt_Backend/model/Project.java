@@ -1,13 +1,19 @@
 package de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
+@Table(name = "PROJECT")
 public class Project {
 
     @Id
@@ -15,22 +21,27 @@ public class Project {
     @Column(name = "ID", nullable = false, updatable = false)
     private Long id;
 
-    @Column(name = "TITLE", length = 15)
+    @Column(name = "TITLE")
     private String title;
 
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "OWNER", length = 15)
+    @Column(name = "OWNER")
     private String owner;
 
-    /*@Column(name = "TITLE")
-    private String[] tags;
-
-    @Column(name = "TITLE")
-    private String[] imageSrcs;*/
-
-    @Column(name = "URL", length = 150)
+    @Column(name = "URL")
     private String url;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "FK_PROJECT_ID", referencedColumnName = "ID")
+    private List<Image> images;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "PROJECT_TAGS",
+            joinColumns = @JoinColumn(name = "PROJECT_ID", referencedColumnName = "ID"),
+            inverseJoinColumns = @JoinColumn(name = "TAG_ID", referencedColumnName = "ID")
+    )
+    private List<Tag> tags;
 
 }

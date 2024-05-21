@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,10 +17,8 @@ public class ProjectDto {
     private String title;
     private String description;
     private String owner;
-    /*
-    private String[] tags;
-    private String[] imageSrcs;
-    */
     private String url;
+    private List<String> imageSrcs = new ArrayList<>();
+    private List<String> tagNames = new ArrayList<>();
 
 }
