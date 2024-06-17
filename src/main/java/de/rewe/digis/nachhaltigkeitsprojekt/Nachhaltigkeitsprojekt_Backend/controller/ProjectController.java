@@ -1,33 +1,61 @@
 package de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.controller;
 
-import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.model.Project;
+import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.dto.ProjectDto;
 import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.service.ProjectService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
-@RequestMapping("/projects")
+@RequiredArgsConstructor
+@Slf4j
+@RequestMapping("/api/projects")
 public class ProjectController {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ProjectController.class);
 
     private final ProjectService projectService;
 
-    public ProjectController(ProjectService projectService) {
-        this.projectService = projectService;
+    @PostMapping
+    public ResponseEntity<ProjectDto> addProject(@RequestBody ProjectDto projectDto) {
+        log.info("POST Request: add Project");
+        return ResponseEntity.ok(projectService.addProject(projectDto));
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Project>> getAllProjects() {
-        LOG.info("GET Request: All Projects");
-        List<Project> projects = projectService.getAllProjects();
-        return new ResponseEntity<>(projects, HttpStatus.OK);
+    @GetMapping
+    public ResponseEntity<List<ProjectDto>> findAllProjects() {
+        log.info("GET Request: All Projects");
+        return ResponseEntity.ok(projectService.getAllProjects());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProjectDto> findProjectById(@PathVariable Long id) {
+        log.info("GET Request: Project With ID: {}", id);
+        return ResponseEntity.ok(projectService.getProjectById(id));
+    }
+
+    @GetMapping("/find")
+    public ResponseEntity<List<ProjectDto>> findAllProjectsByTitleAndDescriptionAndOwner(
+            @RequestParam String searchQuery
+    ) {
+        log.info("GET Request: All Projects By Title and Description and Owner");
+        Set<ProjectDto> result = new HashSet<>();
+        List<ProjectDto> titleList = projectService.getProjectsByTitle(searchQuery);
+        List<ProjectDto> descriptionList = projectService.getProjectsByDescription(searchQuery);
+        List<ProjectDto> ownerList = projectService.getProjectsByOwner(searchQuery);
+        result.addAll(titleList);
+        result.addAll(descriptionList);
+        result.addAll(ownerList);
+        return ResponseEntity.ok(result.stream().toList());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProjectById(@PathVariable Long id) {
+        log.info("DELETE Request: delete Project With ID: {}", id);
+        projectService.deleteProjectById(id);
+        return ResponseEntity.ok().build();
     }
 }

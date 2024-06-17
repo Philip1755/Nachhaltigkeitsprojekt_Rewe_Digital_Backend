@@ -1,63 +1,52 @@
 package de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.dto.ProjectDto;
+import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.dto.mapper.ProjectDtoMapper;
 import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.model.Project;
-import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
+import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.repository.ProjectRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@EnableScheduling
+@RequiredArgsConstructor
 public class ProjectService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ProjectService.class);
+    private final ProjectRepository projectRepository;
 
-    @Getter
-    private final List<Project> allProjects;
-
-    private final ObjectMapper objectMapper;
-
-    public ProjectService() {
-        allProjects = new ArrayList<>();
-        objectMapper = new ObjectMapper();
-        initProjects();
+    public ProjectDto addProject(ProjectDto projectDto) {
+        Project p = projectRepository.save(ProjectDtoMapper.dtoToProject(projectDto));
+        return ProjectDtoMapper.projectToDto(p);
     }
 
-    //call Method every 10 Minutes (600000 Milliseconds)
-    @Scheduled(fixedRate = 600000)
-    private void initProjects() {
-        LOG.info("Initialize Projects");
-        allProjects.clear();
-        File[] jsonFiles = getJsonFiles();
-
-        for (File file : jsonFiles) {
-            if (!file.isFile()) continue;
-            allProjects.add(parseFileToProject(file));
-        }
+    public List<ProjectDto> getAllProjects() {
+        return ProjectDtoMapper.projectsToDtos(projectRepository.findAll());
     }
 
-    private Project parseFileToProject(File file) {
-        try {
-            String Json = Files.readString(file.toPath());
-            return objectMapper.readValue(Json, Project.class);
-        } catch (IOException e) {
-            LOG.error("Could not read the Json File");
-            throw new RuntimeException(e);
-        }
+    public ProjectDto getProjectById(Long id) {
+        return ProjectDtoMapper.projectToDto(projectRepository.findById(id).orElseThrow());
     }
 
-    private File[] getJsonFiles() {
-        File folder = new File("src/main/resources/projects");
-        return folder.listFiles();
+    public List<ProjectDto> getProjectsByTitle(String title) {
+        if (title == null) return new ArrayList<>();
+        return ProjectDtoMapper.projectsToDtos(projectRepository.findAllByTitleContainingIgnoreCase(title));
+    }
+
+    public List<ProjectDto> getProjectsByDescription(String description) {
+        if (description == null) return new ArrayList<>();
+        return ProjectDtoMapper.projectsToDtos(projectRepository.findAllByDescriptionContainingIgnoreCase(description));
+    }
+
+    public List<ProjectDto> getProjectsByOwner(String owner) {
+        if (owner == null) return new ArrayList<>();
+        return ProjectDtoMapper.projectsToDtos(projectRepository.findAllByOwnerContainingIgnoreCase(owner));
+    }
+
+
+    public void deleteProjectById(Long id) {
+        projectRepository.deleteById(id);
     }
 
 }
