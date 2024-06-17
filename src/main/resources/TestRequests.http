@@ -6,12 +6,12 @@ POST http://localhost:8080/api/projects
 Content-Type: application/json
 
 {
-  "title": "title2",
-  "description": "description",
-  "owner": "NABU",
-  "url": "url",
+  "title": "a",
+  "description": "a",
+  "owner": "a",
+  "url": "a",
   "imageSrcs": [
-    "source2"
+    "a"
   ],
   "tagNames": [
     "Tag1", "Tag2"
@@ -24,7 +24,7 @@ Accept: application/json
 
 ###
 
-GET http://localhost:8080/api/projects/find?title=e2
+GET http://localhost:8080/api/projects/find?searchQuery=A
 Accept: application/json
 
 ###

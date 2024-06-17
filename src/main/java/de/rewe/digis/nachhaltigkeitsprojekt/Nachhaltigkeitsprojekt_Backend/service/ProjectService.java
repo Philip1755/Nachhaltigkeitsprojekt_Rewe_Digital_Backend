@@ -7,6 +7,7 @@ import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.repos
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,14 +22,28 @@ public class ProjectService {
     }
 
     public List<ProjectDto> getAllProjects() {
-        List<Project> projects = projectRepository.findAll();
-        return ProjectDtoMapper.projectsToDtos(projects);
+        return ProjectDtoMapper.projectsToDtos(projectRepository.findAll());
     }
 
     public ProjectDto getProjectById(Long id) {
-        Project project = projectRepository.findById(id).orElseThrow();
-        return ProjectDtoMapper.projectToDto(project);
+        return ProjectDtoMapper.projectToDto(projectRepository.findById(id).orElseThrow());
     }
+
+    public List<ProjectDto> getProjectsByTitle(String title) {
+        if (title == null) return new ArrayList<>();
+        return ProjectDtoMapper.projectsToDtos(projectRepository.findAllByTitleContainingIgnoreCase(title));
+    }
+
+    public List<ProjectDto> getProjectsByDescription(String description) {
+        if (description == null) return new ArrayList<>();
+        return ProjectDtoMapper.projectsToDtos(projectRepository.findAllByDescriptionContainingIgnoreCase(description));
+    }
+
+    public List<ProjectDto> getProjectsByOwner(String owner) {
+        if (owner == null) return new ArrayList<>();
+        return ProjectDtoMapper.projectsToDtos(projectRepository.findAllByOwnerContainingIgnoreCase(owner));
+    }
+
 
     public void deleteProjectById(Long id) {
         projectRepository.deleteById(id);
