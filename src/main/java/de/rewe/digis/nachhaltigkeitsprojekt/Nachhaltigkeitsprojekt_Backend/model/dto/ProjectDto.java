@@ -1,4 +1,4 @@
-package de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.dto;
+package de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

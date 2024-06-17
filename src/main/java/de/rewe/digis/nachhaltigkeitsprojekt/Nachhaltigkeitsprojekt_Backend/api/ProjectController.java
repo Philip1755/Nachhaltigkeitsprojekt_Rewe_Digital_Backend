@@ -1,6 +1,6 @@
-package de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.controller;
+package de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.api;
 
-import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.dto.ProjectDto;
+import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.model.dto.ProjectDto;
 import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,30 +14,29 @@ import java.util.Set;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/api/projects")
-public class ProjectController {
+public class ProjectController implements ProjectApi {
 
     private final ProjectService projectService;
 
-    @PostMapping
+    @Override
     public ResponseEntity<ProjectDto> addProject(@RequestBody ProjectDto projectDto) {
         log.info("POST Request: add Project");
         return ResponseEntity.ok(projectService.addProject(projectDto));
     }
 
-    @GetMapping
+    @Override
     public ResponseEntity<List<ProjectDto>> findAllProjects() {
         log.info("GET Request: All Projects");
         return ResponseEntity.ok(projectService.getAllProjects());
     }
 
-    @GetMapping("/{id}")
+    @Override
     public ResponseEntity<ProjectDto> findProjectById(@PathVariable Long id) {
         log.info("GET Request: Project With ID: {}", id);
         return ResponseEntity.ok(projectService.getProjectById(id));
     }
 
-    @GetMapping("/find")
+    @Override
     public ResponseEntity<List<ProjectDto>> findAllProjectsByTitleAndDescriptionAndOwner(
             @RequestParam String searchQuery
     ) {
@@ -52,7 +51,7 @@ public class ProjectController {
         return ResponseEntity.ok(result.stream().toList());
     }
 
-    @DeleteMapping("/{id}")
+    @Override
     public ResponseEntity<?> deleteProjectById(@PathVariable Long id) {
         log.info("DELETE Request: delete Project With ID: {}", id);
         projectService.deleteProjectById(id);
