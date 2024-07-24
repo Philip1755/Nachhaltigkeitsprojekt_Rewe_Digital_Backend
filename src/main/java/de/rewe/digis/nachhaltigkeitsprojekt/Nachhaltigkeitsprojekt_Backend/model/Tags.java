@@ -2,26 +2,42 @@ package de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.mode
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum Tags {
-    Tag1, Tag2, Tag3, Tag4, Tag5, Tag6, Tag7, Tag8, Tag9;
+import java.util.List;
 
-    public static Tags fromId(int id) {
-        return switch (id) {
-            case 0 -> Tag1;
-            case 1 -> Tag2;
-            case 2 -> Tag3;
-            case 3 -> Tag4;
-            case 4 -> Tag5;
-            case 5 -> Tag6;
-            case 6 -> Tag7;
-            case 7 -> Tag8;
-            case 8 -> Tag9;
-            default -> throw new IllegalStateException("Unexpected value: " + id);
-        };
+public enum Tags {
+    Tag1(1),
+    Tag2(2),
+    Tag3(3),
+    Tag4(4),
+    Tag5(5),
+    Tag6(6),
+    Tag7(7),
+    Tag8(8),
+    Tag9(9);
+
+    private final int value;
+
+    Tags(int value) {
+        this.value = value;
     }
 
     @JsonValue
-    public int toValue() {
-        return ordinal();
+    public int getValue() {
+        return value;
+    }
+
+    public static Tags fromValue(int value) {
+        for (Tags tag : Tags.values()) {
+            if (tag.getValue() == value) {
+                return tag;
+            }
+        }
+        throw new IllegalArgumentException("Invalid value: " + value);
+    }
+
+    public static List<Tags> convertIntegersToTags(List<Integer> integerList) {
+        return integerList.stream()
+                .map(Tags::fromValue)
+                .toList();
     }
 }

@@ -30,7 +30,7 @@
     "title": "TestTitle3",
     "description": "TestDescription3",
     "owner": "TestOwner3",
-    "tags": [5, 8, 0],
+    "tags": [5, 8, 9],
     "imageSources": [
       "src1",
       "src2",

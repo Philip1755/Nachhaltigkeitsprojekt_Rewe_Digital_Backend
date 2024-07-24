@@ -9,19 +9,19 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
 
-    public Set<Project> getAllProjects() {
+    public List<Project> getAllProjects() {
         return ProjectService.importProjectsFromJSON();
     }
 
     public Project getProjectById(long id) {
-        Set<Project> projects = ProjectService.importProjectsFromJSON();
+        List<Project> projects = ProjectService.importProjectsFromJSON();
         Optional<Project> foundProject = projects
                 .stream()
                 .filter(project -> project.getId() == id)
@@ -29,50 +29,50 @@ public class ProjectService {
         return foundProject.orElse(null);
     }
 
-    public Set<Project> getProjectsByTitle(String title) {
-        Set<Project> projects = ProjectService.importProjectsFromJSON();
+    public List<Project> getProjectsByTitle(String title) {
+        List<Project> projects = ProjectService.importProjectsFromJSON();
         return projects
                 .stream()
                 .filter(project -> project
                         .getTitle()
                         .toLowerCase()
                         .contains(title.toLowerCase()))
-                .collect(Collectors.toSet());
+                .toList();
     }
 
-    public Set<Project> getProjectsByDescription(String description) {
-        Set<Project> projects = ProjectService.importProjectsFromJSON();
+    public List<Project> getProjectsByDescription(String description) {
+        List<Project> projects = ProjectService.importProjectsFromJSON();
         return projects
                 .stream()
                 .filter(project -> project
                         .getDescription()
                         .toLowerCase()
                         .contains(description.toLowerCase()))
-                .collect(Collectors.toSet());
+                .toList();
     }
 
-    public Set<Project> getProjectsByOwner(String owner) {
-        Set<Project> projects = ProjectService.importProjectsFromJSON();
+    public List<Project> getProjectsByOwner(String owner) {
+        List<Project> projects = ProjectService.importProjectsFromJSON();
         return projects
                 .stream()
                 .filter(project -> project
                         .getOwner()
                         .toLowerCase()
                         .contains(owner.toLowerCase()))
-                .collect(Collectors.toSet());
+                .toList();
     }
 
-    public Set<Project> getProjectsByTags(Set<Tags> tags) {
-        Set<Project> projects = ProjectService.importProjectsFromJSON();
+    public List<Project> getProjectsByTags(List<Integer> tags) {
+        List<Project> projects = ProjectService.importProjectsFromJSON();
         return projects
                 .stream()
                 .filter(project -> project
                         .getTags()
-                        .containsAll(tags))
-                .collect(Collectors.toSet());
+                        .containsAll(Tags.convertIntegersToTags(tags)))
+                .toList();
     }
 
-    private static Set<Project> importProjectsFromJSON() {
+    private static List<Project> importProjectsFromJSON() {
         String jsonPath = "src//main//resources//projects//allProjects.json";
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -85,6 +85,6 @@ public class ProjectService {
             e.printStackTrace();
         }
 
-        return projects;
+        return projects.stream().toList();
     }
 }
