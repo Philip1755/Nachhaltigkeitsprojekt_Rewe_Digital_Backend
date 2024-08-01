@@ -1,28 +1,30 @@
 package de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.api;
 
-import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.model.dto.ProjectDto;
+import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.model.Project;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
 public interface ProjectApi {
 
-    @PostMapping("/projects")
-    ResponseEntity<ProjectDto> addProject(@RequestBody ProjectDto projectDto);
-
     @GetMapping("/projects")
-    ResponseEntity<List<ProjectDto>> findAllProjects();
+    ResponseEntity<List<Project>> findAllProjects();
 
     @GetMapping("/projects/{id}")
-    ResponseEntity<ProjectDto> findProjectById(@PathVariable Long id);
+    ResponseEntity<Project> findProjectsById(@PathVariable long id);
 
-    @GetMapping("/projects/search")
-    ResponseEntity<List<ProjectDto>> findAllProjectsByTitleAndDescriptionAndOwner(
-            @RequestParam String searchQuery
-    );
+    @GetMapping("/projects/title/{title}")
+    ResponseEntity<List<Project>> findProjectsByTitle(@PathVariable String title);
 
-    @DeleteMapping("/projects/{id}")
-    ResponseEntity<?> deleteProjectById(@PathVariable Long id);
+    @GetMapping("/projects/description/{description}")
+    ResponseEntity<List<Project>> findProjectsByDescription(@PathVariable String description);
+
+    @GetMapping("/projects/owner/{owner}")
+    ResponseEntity<List<Project>> findProjectsByOwner(@PathVariable String owner);
+
+    @GetMapping("projects/tags/{tags}")
+    ResponseEntity<List<Project>> findProjectsByTags(@PathVariable List<Integer> tags);
 
 }

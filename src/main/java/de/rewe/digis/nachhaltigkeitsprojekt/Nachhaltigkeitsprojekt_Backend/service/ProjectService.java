@@ -1,52 +1,90 @@
 package de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.service;
 
-import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.model.dto.ProjectDto;
-import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.model.dto.mapper.ProjectDtoMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.model.Project;
-import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.repository.ProjectRepository;
-import lombok.RequiredArgsConstructor;
+import de.rewe.digis.nachhaltigkeitsprojekt.Nachhaltigkeitsprojekt_Backend.model.Tags;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
-@RequiredArgsConstructor
 public class ProjectService {
 
-    private final ProjectRepository projectRepository;
-
-    public ProjectDto addProject(ProjectDto projectDto) {
-        Project p = projectRepository.save(ProjectDtoMapper.dtoToProject(projectDto));
-        return ProjectDtoMapper.projectToDto(p);
+    public List<Project> getAllProjects() {
+        return ProjectService.importProjectsFromJSON();
     }
 
-    public List<ProjectDto> getAllProjects() {
-        return ProjectDtoMapper.projectsToDtos(projectRepository.findAll());
+    public Project getProjectById(long id) {
+        List<Project> projects = ProjectService.importProjectsFromJSON();
+        Optional<Project> foundProject = projects
+                .stream()
+                .filter(project -> project.getId() == id)
+                .findFirst();
+        return foundProject.orElse(null);
     }
 
-    public ProjectDto getProjectById(Long id) {
-        return ProjectDtoMapper.projectToDto(projectRepository.findById(id).orElseThrow());
+    public List<Project> getProjectsByTitle(String title) {
+        List<Project> projects = ProjectService.importProjectsFromJSON();
+        return projects
+                .stream()
+                .filter(project -> project
+                        .getTitle()
+                        .toLowerCase()
+                        .contains(title.toLowerCase()))
+                .toList();
     }
 
-    public List<ProjectDto> getProjectsByTitle(String title) {
-        if (title == null) return new ArrayList<>();
-        return ProjectDtoMapper.projectsToDtos(projectRepository.findAllByTitleContainingIgnoreCase(title));
+    public List<Project> getProjectsByDescription(String description) {
+        List<Project> projects = ProjectService.importProjectsFromJSON();
+        return projects
+                .stream()
+                .filter(project -> project
+                        .getDescription()
+                        .toLowerCase()
+                        .contains(description.toLowerCase()))
+                .toList();
     }
 
-    public List<ProjectDto> getProjectsByDescription(String description) {
-        if (description == null) return new ArrayList<>();
-        return ProjectDtoMapper.projectsToDtos(projectRepository.findAllByDescriptionContainingIgnoreCase(description));
+    public List<Project> getProjectsByOwner(String owner) {
+        List<Project> projects = ProjectService.importProjectsFromJSON();
+        return projects
+                .stream()
+                .filter(project -> project
+                        .getOwner()
+                        .toLowerCase()
+                        .contains(owner.toLowerCase()))
+                .toList();
     }
 
-    public List<ProjectDto> getProjectsByOwner(String owner) {
-        if (owner == null) return new ArrayList<>();
-        return ProjectDtoMapper.projectsToDtos(projectRepository.findAllByOwnerContainingIgnoreCase(owner));
+    public List<Project> getProjectsByTags(List<Integer> tags) {
+        List<Project> projects = ProjectService.importProjectsFromJSON();
+        return projects
+                .stream()
+                .filter(project -> project
+                        .getTags()
+                        .containsAll(Tags.convertIntegersToTags(tags)))
+                .toList();
     }
 
+    private static List<Project> importProjectsFromJSON() {
+        String jsonPath = "src//main//resources//projects//allProjects.json";
 
-    public void deleteProjectById(Long id) {
-        projectRepository.deleteById(id);
+        ObjectMapper objectMapper = new ObjectMapper();
+        Set<Project> projects = new HashSet<>();
+
+        try {
+            projects = objectMapper.readValue(new File(jsonPath), new TypeReference<HashSet<Project>>() {
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return projects.stream().toList();
     }
-
 }
